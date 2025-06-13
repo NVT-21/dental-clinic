@@ -1,0 +1,24 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::table('appointments', function (Blueprint $table) {
+            $table->timestamp('actual_arrival_time')->nullable();
+            $table->enum('arrival_status', ['early', 'on_time', 'late'])->nullable();
+        });
+    }
+
+    public function down()
+    {
+        Schema::table('appointments', function (Blueprint $table) {
+            $table->dropColumn('actual_arrival_time');
+            $table->dropColumn('arrival_status');
+        });
+    }
+}; 
