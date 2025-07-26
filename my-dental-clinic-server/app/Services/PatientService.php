@@ -37,6 +37,7 @@ class PatientService extends BaseService
             $services = $data['services'] ?? [];
             $symptoms = $data['symptoms'] ?? null;
             $appointmentType = $data['appointment_type'] ?? 'consultation';
+            $medicalHistory = $data['medical_history'] ?? null;
 
             // Find patient by phone number
             $patients = $this->PatientRepository->findByPhone($phoneNumber);
@@ -67,10 +68,11 @@ class PatientService extends BaseService
                         'idPatient' => $patient->id,
                         'bookingDate' => $appointmentDate,
                         'appointmentTime' => $appointmentTime,
-                        'status' => 'Pending',
+                        'status' => 'Waiting for Estimation',
                         'is_done' => false,
                         'appointment_type' => $appointmentType,
                         'symptoms' => $symptoms,
+                        'medical_history' => $medicalHistory,
                     ]);
 
                     // Attach services to appointment
@@ -103,10 +105,11 @@ class PatientService extends BaseService
                         'idPatient' => $patient->id,
                         'bookingDate' => $appointmentDate,
                         'appointmentTime' => $appointmentTime,
-                        'status' => 'Pending',
+                        'status' => 'Waiting for Estimation',
                         'is_done' => false,
                         'appointment_type' => $appointmentType,
                         'symptoms' => $symptoms,
+                        'medical_history' => $medicalHistory,
                     ]);
 
                     // Attach services to appointment
@@ -155,6 +158,7 @@ class PatientService extends BaseService
                 'is_done' => false,
                 'appointment_type' => $appointmentType,
                 'symptoms' => $symptoms,
+                'medical_history' => $medicalHistory,
             ]);
 
             // Attach services to appointment

@@ -17,9 +17,9 @@ class AppointmentService extends BaseService
     {
         return $this->AppointmentRepository;
     }
-    public function getAppointments($perPage , $keyword = null, $status = null)
+    public function getAppointments($perPage, $keyword = null, $status = null, $role, $date = null)
     {
-        return $this->AppointmentRepository->getAppointments($perPage , $keyword , $status );
+        return $this->AppointmentRepository->getAppointments($perPage, $keyword, $status, $role, $date);
     }
     public function updateAppointment($id, $data,$employee){
         return $this->AppointmentRepository->updateAppointment($id, $data,$employee);
@@ -27,6 +27,10 @@ class AppointmentService extends BaseService
     public function getConfirmedAppointmentsInTimeRange($data)
     {
         return $this->AppointmentRepository->getConfirmedAppointmentsInTimeRange($data);
+    }
+    public function checkAndSuggestSlotWithSubBlock( $date,$startTime,$totalEstimatedDuration,$maxSuggestions)
+    {
+        return  $this->AppointmentRepository->checkAndSuggestSlotWithSubBlock( $date,$startTime,$totalEstimatedDuration,$maxSuggestions);
     }
 
  

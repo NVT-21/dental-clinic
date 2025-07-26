@@ -83,7 +83,7 @@ class StatisticsController extends Controller
             ->withCount(['medicalExams' => function ($query) use ($startDate, $endDate) {
                 $query->where('status', 'Completed')
                       ->where('statusPayment', 'Paid')
-                      ->whereBetween('created_at', [$startDate, $endDate]);
+                      ->whereBetween('ExamDate', [$startDate, $endDate]);
             }])
             ->get()
             ->map(function ($doctor) {

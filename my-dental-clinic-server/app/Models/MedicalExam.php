@@ -4,9 +4,10 @@ namespace App\Models;
 
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class MedicalExam extends Model
 {
+    use HasFactory;
     protected $fillable = ['idEmployee', 'idAppointment', 'symptoms', 'status','statusPayment' 
     ,'statusPayment', 'ExamDate','diagnosis','advice','createdById'];
 

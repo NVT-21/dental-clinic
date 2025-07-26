@@ -15,7 +15,7 @@ class WorkShiftSeeder extends Seeder
         DB::table('work_shifts')->insert([
             [
                 'shiftName' => 'Morning',
-                'startTime' => '07:00:00',
+                'startTime' => '08:00:00',
                 'endTime' => '11:30:00'
             ],
             [

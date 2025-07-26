@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'idPatient', 
         'bookingDate', 
@@ -13,9 +14,12 @@ class Appointment extends Model
         'status',
         'is_done',
         'symptoms', // Triệu chứng/tình trạng bệnh
+        'medical_history', // Tiền sử bệnh
         'notes',
         'appointment_type', 
-        'estimated_duration' // Tổng thời gian dự kiến của cuộc hẹn
+        'estimated_duration',// Tổng thời gian dự kiến của cuộc hẹn
+        'locked_by' ,
+        'locked_at'
     ];
 
     public function patient()
@@ -50,4 +54,10 @@ class Appointment extends Model
     {
         return $this->appointmentServices()->sum('estimated_duration');
     }
+    // Appointment.php
+    public function lockedBy()
+    {
+        return $this->belongsTo(Employee::class, 'locked_by');
+    }
+
 }

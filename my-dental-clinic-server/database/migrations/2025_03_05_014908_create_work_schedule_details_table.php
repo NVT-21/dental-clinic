@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('workScheduleId');
             $table->unsignedBigInteger('shiftId');
-            $table->enum('status', ['present', 'absent'])->default('present');
+            $table->enum('status', ['off', 'working'])->default('off');
             $table->timestamps();
 
             $table->foreign('workScheduleId')->references('id')->on('work_schedules')->onDelete('cascade');

@@ -9,14 +9,14 @@ return new class extends Migration
     public function up()
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->enum('arrival_status', ['early', 'on_time', 'late'])->nullable();
+            $table->text('medical_history')->nullable()->after('symptoms');
         });
     }
 
     public function down()
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->dropColumn('arrival_status');
+            $table->dropColumn('medical_history');
         });
     }
 }; 

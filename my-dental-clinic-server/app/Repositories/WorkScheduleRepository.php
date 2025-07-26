@@ -93,7 +93,7 @@ class WorkScheduleRepository extends BaseRepository
     {
         // Xác định shiftId dựa trên thời gian
         $shiftId = null;
-        if ($time >= 7 && $time < 13) {
+        if ($time >= 8 && $time < 13) {
             $shiftId = 1; // Ca sáng
         } elseif ($time >= 13 && $time < 17) {
             $shiftId = 2; // Ca chiều

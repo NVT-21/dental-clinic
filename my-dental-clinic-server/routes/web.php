@@ -39,8 +39,9 @@ Route::prefix('api')->group(function () {
     Route::post("/saveOrUpdateEmployee", [AuthController::class, 'saveOrUpdateEmployee'])->name("Auth.register");
     Route::post("/login",[AuthController::class,'login'])->name("Auth.login");
     // APPOINTMENT
-    Route::get("/getAppointments",[AppointmentController::class,'getAppointments'])->name("Appointment.getAppointments");
+    
      Route::get("/getConfirmedAppointmentsInTimeRange",[AppointmentController::class,'getConfirmedAppointmentsInTimeRange']);
+     Route::post('/check-and-suggest-slot', [AppointmentController::class, 'checkAndSuggestSlotWithSubBlock']);
     //Employee
     Route::get("/doctor-without-room",[EmployeeController::class,'getDoctorWithoutRoom']);
     Route::get("/getDoctorWorking",[WorkScheduleController::class,'getDoctorWorking']);
@@ -95,6 +96,10 @@ Route::prefix('api')->group(function () {
         //appointment
         Route::patch("/getAppointments/{id}",[AppointmentController::class,'update'])->name("Appointment.update");
         Route::post('/broadcasting/auth', [\Illuminate\Broadcasting\BroadcastController::class, 'authenticate']);
+        Route::get("/getAppointments",[AppointmentController::class,'getAppointments'])->name("Appointment.getAppointments");
+        //lock-appointment
+        Route::post('/appointments/{id}/lock', [AppointmentController::class, 'lock']);
+        Route::post('/appointments/{id}/unlock', [AppointmentController::class, 'unlock']);
       
     });
 });

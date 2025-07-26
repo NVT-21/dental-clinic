@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\AppointmentService;
+use App\Models\Appointment;
 class AppointmentController extends ApiResponseController
 {
     protected $AppointmentService ;
@@ -13,11 +14,14 @@ class AppointmentController extends ApiResponseController
     }
     public function getAppointments(Request $request)
     {
-        $keyword=$request->input('keyword');
-        $status=$request->input('status');
-        $perPage = $request->input('per_page', 5); 
-        $appointments = $this->AppointmentService->getAppointments($perPage, $keyword, $status);
-
+        $user = $this->getUser();
+        $role = $user->roles->first()->name ?? null;
+        $keyword = $request->input('keyword');
+        $status = $request->input('status');
+        $date = $request->input('date');
+        $perPage = $request->input('per_page', 5);
+        $appointments = $this->AppointmentService->getAppointments($perPage, $keyword, $status, $role, $date);
+    
         return response()->json($appointments);
     }
     public function update (Request $request,$id)
@@ -38,18 +42,78 @@ class AppointmentController extends ApiResponseController
         return $this->AppointmentService->getConfirmedAppointmentsInTimeRange($data);
     }
 
-   
-    public function updateAppointmentDetails(Request $request, $id)
+    public function checkAndSuggestSlotWithSubBlock(Request $request)
     {
         $data = $request->validate([
-            'estimated_duration' => 'required|integer|min:15',
-            'notes' => 'nullable|string'
+            'date' => 'required|date_format:Y-m-d',
+            'startTime' => 'required|date_format:H:i',
+            'totalEstimatedDuration' => 'required|integer|min:3|max:240',
+            'maxSuggestions' => 'sometimes|integer|min:1|max:10'
         ]);
 
-        $result = $this->AppointmentService->updateAppointmentDetails($id, $data);
-        if ($result['success']) {
-            return $this->success($result['message']);
-        }
-        return $this->error($result['message']);
+        $date = $data['date'];
+        $startTime = $data['startTime'];
+        $totalEstimatedDuration = $data['totalEstimatedDuration'];
+        $maxSuggestions = $data['maxSuggestions'] ?? 30; // Mặc định 5 nếu không có
+
+        // Gọi repository để kiểm tra
+        $result = $this->AppointmentService->checkAndSuggestSlotWithSubBlock(
+            $date,
+            $startTime,
+            $totalEstimatedDuration,
+            $maxSuggestions
+        );
+
+        return response()->json($result);
     }
+    // AppointmentController.php
+    public function lock($id)
+    {
+        $employee = $this->getEmployee();
+        if (!$employee) {
+            return response()->json(['message' => 'Unable to identify employee'], 403);
+        }
+    
+        $appointment = Appointment::findOrFail($id);
+    
+        if ($appointment->locked_by && $appointment->locked_by !== $employee->id) {
+            // Get locker's name
+            $locker = $appointment->lockedBy; // relation
+            $lockerName = $locker?->fullName ?? 'Someone';
+            return response()->json([
+                'locked_by' => $appointment->locked_by,
+                'locked_by_name' => $lockerName,
+                'locked_at' => $appointment->locked_at,
+            ], 409);
+        }
+    
+        // Update lock
+        $appointment->update([
+            'locked_by' => $employee->id,
+            'locked_at' => now(),
+        ]);
+    
+        return response()->json(['message' => 'Appointment locked successfully']);
+    }
+    
+
+public function unlock($id)
+{
+    $employee = $this->getEmployee();
+    if (!$employee) {
+        return response()->json(['message' => 'Unable to identify employee'], 403);
+    }
+
+    $appointment = Appointment::findOrFail($id);
+
+    // Only the locker can unlock
+    if ($appointment->locked_by === $employee->id) {
+        $appointment->update([
+            'locked_by' => null,
+            'locked_at' => null,
+        ]);
+    }
+
+    return response()->json(['message' => 'Appointment unlocked successfully']);
+}
 }
